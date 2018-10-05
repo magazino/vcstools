@@ -845,8 +845,9 @@ class GitClient(VcsClientBase):
                 return True
             print("Cannot fast-forward, local repository and remote '%s' have diverged." % branch_parent)
             return False
-        # Refresh the index manually, just as 'git pull' does it.
-        cmd = "git update-index --refresh"
+        # 'git reset --keep' doesn't refresh the index. Do it manually to avoid
+        # errors as reported in: https://github.com/vcstools/wstool/issues/77
+        cmd = "git update-index -q --refresh"
         run_shell_command(cmd,
                           shell=True,
                           cwd=self._path,
